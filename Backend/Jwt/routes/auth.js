@@ -9,9 +9,9 @@ const passport = require('passport');
 router.post('/login', function (req, res, next) {
 
     passport.authenticate('local', {session: false}, (err, user, info) => {
-        console.log('user auth: ', user);
-        console.log('err: ', err);
-        console.log('info: ', info);
+        // console.log('user auth: ', user);
+        // console.log('err: ', err);
+        // console.log('info: ', info);
         if (err || !user) {
             return res.status(400).json({
                 message: info ? info.message : 'Login failed',

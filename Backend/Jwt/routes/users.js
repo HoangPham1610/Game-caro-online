@@ -29,9 +29,6 @@ router.post('/login', function (req, res, next) {
           }
 
           const token = jwt.sign(user, 'your_jwt_secret');
-          // const token = jwt.sign({
-          //     data: user
-          //   }, 'secret', { expiresIn: 60 * 60 });
           return res.json({user, token});
       });
   })

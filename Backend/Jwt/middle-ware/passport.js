@@ -37,7 +37,6 @@ passport.use(new JWTStrategy({
         //find the user in db if needed
         return userModel.findOneByUsername(jwtPayload.username)
             .then(user => {
-                console.log('jwt user: ', user);
                 return cb(null, user);
             })
             .catch(err => {

@@ -16,12 +16,10 @@ exports.load = (sql) => {
 			if (err) {
 				reject(err)
 			} else {
-                console.log('connect success');
 				connection.query(sql, function (error, rows, fields) {
 					connection.release();
 
 					if (error) {
-                        console.log(error);
 						reject(error);
 					} else {
 						resolve(JSON.parse(JSON.stringify(rows)));

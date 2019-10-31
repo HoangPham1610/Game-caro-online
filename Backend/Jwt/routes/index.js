@@ -9,8 +9,8 @@ router.get('/', function(req, res, next) {
 /* GET user profile. */
 router.get('/me', function(req, res, next) {
   passport.authenticate('jwt', {session: false}, (err, user) => {
-    console.log(err);
-    console.log(user);
+    // console.log(err);
+    // console.log(user);
     if (err) {
       res.json({"error": err});
     }
