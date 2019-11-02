@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import { bindActionCreators } from '../../../../../../../AppData/Local/Microsoft/TypeScript/3.6/node_modules/redux';
+import { bindActionCreators } from 'redux';
 import fetchLogin from '../api/loginApi';
 import {Alert} from 'react-bootstrap';
 import { isNullOrUndefined } from 'util';
@@ -41,6 +41,7 @@ class SignIn extends Component {
         // Login success
         if (isNullOrUndefined(user) === false && isNullOrUndefined(token) === false) {
             this.props.history.push('/game-menu');
+            console.log('redirect menu');
         } else {
             console.log('allert');
             return <Alert variant = "danger">{message}</Alert>
@@ -59,7 +60,7 @@ class SignIn extends Component {
         const {message} = this.props.state;
         return (
             <div>
-                {() => this.renderErrorMessage(message)}
+                {/* {() => this.renderErrorMessage(message)} */}
                 <div className="login-wrap">
                 <div className="login-html">
                     <input id="tab-1" type="radio" name="tab" className="sign-in" defaultChecked /><label htmlFor="tab-1" className="tab">Sign In</label>

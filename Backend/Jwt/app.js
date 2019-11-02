@@ -9,6 +9,7 @@ const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 const gameRouter = require('./routes/game');
 require('./middle-ware/passport');
+require('./game-data/gameData')();
 const authUser = require('./middle-ware/authenUser');
 const app = express();
 
@@ -26,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/user', usersRouter);
 app.use(authRouter);
-app.use(authUser, gameRouter);
+app.use('/game',authUser, gameRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -43,8 +44,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-
-// List user waiting
-let listUser = [];
-app.use
 module.exports = app;

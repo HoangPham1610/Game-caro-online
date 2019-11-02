@@ -16,11 +16,12 @@ const fetchLogin = (username, password) => {
         });
         
         const {data} = res;
-       
+       console.log(res);
         if (isNullOrUndefined(data) === false) {
             const { user, token, message } = data;
             if (isNullOrUndefined(user) === false && isNullOrUndefined(token) === false) {        
                 dispatch(loginSuccess(user, token));
+                console.log('Login success');
             } else {
                 dispatch(loginFailuer(message));
             }
