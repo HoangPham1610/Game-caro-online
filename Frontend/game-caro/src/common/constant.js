@@ -8,10 +8,18 @@ export const ACTION_TYPE = {
 
     FIND_PLAYER_START: 'Find Player Start',
     FIND_PLAYER_SUCCESS: 'Find Player Success',
-    FIND_PLAYER_ERROR: 'Find Player Error'
+    FIND_PLAYER_ERROR: 'Find Player Error',
+
+    CLICK_SQUARE: 'Click Square',
+    UPDATE_GAME: 'Update Game',
 }
 
 export const MESSAGE = {  
     FIND_PLAYER_SUCCESS: 'Find Player Success',
     WAITING_FIND_PLAYER: 'Please Waiting'
+}
+
+export const SOCKET_EVENT = {
+    FIND_PLAYER_SUCCESS: 'findPlayerSuccess',
+    UPDATE_GAME: 'updateGame',
 }

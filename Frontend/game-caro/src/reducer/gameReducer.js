@@ -40,7 +40,7 @@ export default (state = initialState, action) => {
     return Object.assign({}, state, {
         isWaiting: true,
         isConnect: false
-    })
+    });
   case ACTION_TYPE.FIND_PLAYER_SUCCESS:
     console.log(action);
     return Object.assign({}, state, {
@@ -53,7 +53,13 @@ export default (state = initialState, action) => {
     return Object.assign({}, state, {
       isWaiting: false,
       isConnect: false
-    })
+    });
+
+    case ACTION_TYPE.UPDATE_GAME:
+    case ACTION_TYPE.CLICK_SQUARE:
+      return Object.assign({}, state, {
+        roomInfo: roomInfo
+    });
   default:
     return state
   }

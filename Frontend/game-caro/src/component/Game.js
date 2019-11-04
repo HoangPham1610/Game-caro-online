@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Board from './Board';
 import {Container, Row, Col} from 'react-bootstrap';
-// import {
-//   clickNewGame,
-//   clickJumpTo,
-//   clickSquare,
-//   clickReverse
-// } from '../actions/gameAction';
+import { bindActionCreators } from 'redux';
+import { fetchClickSquare } from '../api/playGameApi';
+import socketIOClient from 'socket.io-client';
+import { SOCKET_EVENT } from '../common/constant';
+import { updateGame } from '../action/gameAction';
 
 class Game extends Component {
   /**
@@ -87,10 +86,19 @@ class Game extends Component {
     handleClickReverse();
   };
 
+  componentDidMount = () => {
+    const io = socketIOClient('http://localhost:3001');
+    io.on(SOCKET_EVENT.UPDATE_GAME, (data)=>{
+      const {roomInfo} = data;
+      const {updateGame} = this.props;
+      updateGame(roomInfo);
+    })
+  }
   render() {
-    const { state } = this.props;
+    const { gameInfo, handleClickSquare } = this.props;
+    const {token} = this.props.userLogin;
     console.log(this.props);
-    const { historys, stepNumber, listWin, isReverse } = state.roomInfo;
+    const {roomId, historys, stepNumber, listWin } = gameInfo.roomInfo;
     console.log(historys, stepNumber);
     const current = historys[stepNumber];
     return (
@@ -100,9 +108,7 @@ class Game extends Component {
             <Board
               squares={current.squares}
               listWin={listWin}
-              onClick={(row, col) => {
-                this.handleClickSquare(row, col);
-              }}
+              onClick={(row, col) => {handleClickSquare(roomId, row, col, token);}}
             />
           </div>
           {/* <div className="col-lg-3">
@@ -136,16 +142,12 @@ class Game extends Component {
 }
 
 const mapStateToProps = state => ({
-  state: state.gameInfo
+  gameInfo: state.gameInfo,
+  userLogin: state.userLogin
 });
 
 const mapDispatchToProps = dispatch => {
-  return {
-    // handleClickNewGame: () => dispatch(clickNewGame()),
-    // handleClickSquare: (row, col) => dispatch(clickSquare(row, col)),
-    // handleClickJumpTo: step => dispatch(clickJumpTo(step)),
-    // handleClickReverse: () => dispatch(clickReverse())
-  };
+  return bindActionCreators({handleClickSquare: fetchClickSquare, updateGame: updateGame}, dispatch);
 };
 
 export default connect(

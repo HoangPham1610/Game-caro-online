@@ -33,7 +33,7 @@ passport.use(new JWTStrategy({
         secretOrKey   : 'your_jwt_secret'
     },
     function (jwtPayload, cb) {
-        console.log('payload: ', jwtPayload);
+        // console.log('payload: ', jwtPayload);
         //find the user in db if needed
         return userModel.findOneByUsername(jwtPayload.username)
             .then(user => {

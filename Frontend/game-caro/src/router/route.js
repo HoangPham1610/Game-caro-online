@@ -8,7 +8,7 @@ import RoomGame from '../component/RoomGame';
 export default () => {
   return (
     <div>
-        {/* <Route exact path="/" component={RoomGame}/> */}
+        <Route exact path="/" component={SignIn}/>
         <Route path="/home" component = {Home}/>
         <Route path="/login" component = {SignIn}/>
         <Route path="/game-menu" component = {MenuGame}/>

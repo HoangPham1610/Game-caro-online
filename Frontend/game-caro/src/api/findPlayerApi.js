@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { findPlayerStart, findPlayerSucces, findPlayerError } from '../action/gameAction';
+import { findPlayerStart, findPlayerSuccess, findPlayerError } from '../action/gameAction';
 import { isNullOrUndefined } from 'util';
 import { MESSAGE } from '../common/constant';
 
@@ -26,7 +26,7 @@ const fetchFindPlayer = (token) => {
             if (isNullOrUndefined(error) === true) {
                 if (isNullOrUndefined(message) === false) {  
                     if (message === MESSAGE.FIND_PLAYER_SUCCESS) {
-                        dispatch(findPlayerSucces(roomId, roomInfo));
+                        dispatch(findPlayerSuccess(roomId, roomInfo));
                     } else if (message === MESSAGE.WAITING_FIND_PLAYER) {
                         console.log('waiting');
                         return;
