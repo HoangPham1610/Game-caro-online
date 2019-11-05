@@ -33,3 +33,10 @@ export const updateGame = (roomInfo) => {
         roomInfo: roomInfo
     }
 }
+
+export const chat = (listMessage) => {
+    return {
+        type: ACTION_TYPE.CHAT,
+        listMessage: listMessage
+    }
+}

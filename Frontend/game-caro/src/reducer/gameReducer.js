@@ -1,7 +1,7 @@
 import { ACTION_TYPE } from '../common/constant';
 
 const initialState = {
-    isWaiting: false,
+    isWaiting: false, // Đang tìm kiếm người chơi
     isConnect: false,
     roomId: null,
     roomInfo: {
@@ -28,12 +28,13 @@ const initialState = {
           row: null,
           col: null
         }
-      ] // Danh sách vị trí những quân cờ tạo chiến thắng
+      ], // Danh sách vị trí những quân cờ tạo chiến thắng
+      listMessage: [], // Lưu tin nhắn của người dùng
     }
 }
 
 export default (state = initialState, action) => {
-    const {type, roomId, roomInfo} = action;
+    const {type, roomId, roomInfo, listMessage} = action;
   switch (type) {
 
   case ACTION_TYPE.FIND_PLAYER_START:
@@ -60,6 +61,9 @@ export default (state = initialState, action) => {
       return Object.assign({}, state, {
         roomInfo: roomInfo
     });
+
+    case ACTION_TYPE.CHAT:
+      return Object.assign({}, state, {roomInfo: Object.assign({}, state.roomInfo, {listMessage: listMessage})});
   default:
     return state
   }

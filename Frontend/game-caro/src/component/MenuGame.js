@@ -7,6 +7,7 @@ import {connect} from 'react-redux';
 import { isNullOrUndefined } from 'util';
 import { SOCKET_EVENT } from '../common/constant';
 import { findPlayerSuccess } from '../action/gameAction';
+import ModalLoading from './Modal/ModalLoading';
 class MenuGame extends Component {
 
   /**
@@ -32,23 +33,28 @@ class MenuGame extends Component {
   }
 
   componentDidMount = () => {
-    const io = socketIOClient('http://localhost:3001');
-    io.on(SOCKET_EVENT.FIND_PLAYER_SUCCESS, (data)=>{
-      const {roomId, roomInfo} = data;
-      const {findPlayerSuccess} = this.props;
-      findPlayerSuccess(roomId, roomInfo);
-      const {isConnect} = this.props.gameInfo;
-      if (isConnect) {
-        console.log('connec socket io');
-        return this.props.history.push('/room/'+ roomId);
-      }
-    })
+    const {user} = this.props.userLogin;
+    if (user) {
+      const {username} = this.props.userLogin.user;
+      const io = socketIOClient('http://localhost:3001');
+      io.on(SOCKET_EVENT.FIND_PLAYER_SUCCESS + username, (data)=>{
+        const {roomId, roomInfo} = data;
+        const {findPlayerSuccess} = this.props;
+        findPlayerSuccess(roomId, roomInfo);
+        const {isConnect} = this.props.gameInfo;
+        if (isConnect) {
+          console.log('connec socket io');
+          return this.props.history.push('/room/'+ roomId);
+        }
+      });
+    }
   }
   render() {
     this.checkLogin();
     return (
      
       <Container className="text-center">
+        <ModalLoading/>
         <Row>
           <Col>
             Menu Game

@@ -50,7 +50,7 @@ class SignIn extends Component {
 
     renderErrorMessage = (message) => {
         if (isNullOrUndefined(message) === false) {
-            return <Alert variant = "danger">{message}</Alert>
+            return <Alert className="text-center" show = {true} variant = "danger">{message}</Alert>
         } else {
             return null;
         }
@@ -60,7 +60,7 @@ class SignIn extends Component {
         const {message} = this.props.state;
         return (
             <div>
-                {/* {() => this.renderErrorMessage(message)} */}
+                {this.renderErrorMessage(message)}
                 <div className="login-wrap">
                 <div className="login-html">
                     <input id="tab-1" type="radio" name="tab" className="sign-in" defaultChecked /><label htmlFor="tab-1" className="tab">Sign In</label>

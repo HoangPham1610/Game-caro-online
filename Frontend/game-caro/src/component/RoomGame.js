@@ -7,6 +7,7 @@ import History from './History';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { isNullOrUndefined } from 'util';
+import ListGameButon from './ListButtonGame';
 class RoomGame extends Component {
     checkLogin = () => {
         const {token} = this.props.userLogin;
@@ -19,7 +20,7 @@ class RoomGame extends Component {
         this.checkLogin();
     }
     render() {
-        const {playerX, playerO} = this.props.gameInfo.roomInfo;
+        const {playerX, playerO, nextPlayer} = this.props.gameInfo.roomInfo;
         const {user} = this.props.userLogin;
         let leftPlayer = playerX;
         let rightPlayer = playerO;
@@ -35,6 +36,10 @@ class RoomGame extends Component {
                         <ChatForm/>
                     </Col>
                     <Col xs={6}>
+                        <div>
+                            <span>Đến lượt: {nextPlayer.username}</span>
+                        </div>
+                        <ListGameButon/>
                         <Game/>
                     </Col>
                     <Col xs={3}>

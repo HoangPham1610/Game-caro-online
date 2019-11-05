@@ -88,7 +88,8 @@ class Game extends Component {
 
   componentDidMount = () => {
     const io = socketIOClient('http://localhost:3001');
-    io.on(SOCKET_EVENT.UPDATE_GAME, (data)=>{
+    const {username} = this.props.userLogin.user;
+    io.on(SOCKET_EVENT.UPDATE_GAME +username, (data)=>{
       const {roomInfo} = data;
       const {updateGame} = this.props;
       updateGame(roomInfo);

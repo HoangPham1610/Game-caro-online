@@ -12,6 +12,7 @@ export const ACTION_TYPE = {
 
     CLICK_SQUARE: 'Click Square',
     UPDATE_GAME: 'Update Game',
+    CHAT: 'Chat',
 }
 
 export const MESSAGE = {  
@@ -22,4 +23,5 @@ export const MESSAGE = {
 export const SOCKET_EVENT = {
     FIND_PLAYER_SUCCESS: 'findPlayerSuccess',
     UPDATE_GAME: 'updateGame',
+    UPDATE_LIST_MESSAGE: 'updateListMessage',
 }
