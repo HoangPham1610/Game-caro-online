@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Navbar, Nav, Col, NavDropdown} from 'react-bootstrap';
+import {Navbar, Nav, NavDropdown} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import UserAvatar from './UserAvatar';
 class Navigation extends Component {
@@ -41,9 +41,5 @@ class Navigation extends Component {
 const mapStateToProps = (state) => ({
   userLogin: state.userLogin
 })
-
-const mapDispatchToProps = {
-  
-}
 
 export default connect(mapStateToProps)(Navigation);

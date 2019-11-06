@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Board from './Board';
-import {Container, Row, Col} from 'react-bootstrap';
 import { bindActionCreators } from 'redux';
-import { fetchClickSquare } from '../api/playGameApi';
+import { fetchClickSquare} from '../api/playGameApi';
 import socketIOClient from 'socket.io-client';
 import { SOCKET_EVENT } from '../common/constant';
 import { updateGame } from '../action/gameAction';
-
+ 
 class Game extends Component {
   /**
    * Function: Xử lý sự kiện click vào square
@@ -18,17 +17,17 @@ class Game extends Component {
     const { handleClickSquare } = this.props;
     handleClickSquare(row, col);
   };
-
+ 
   handleClickNewGame = () => {
     const { handleClickNewGame } = this.props;
     handleClickNewGame();
   };
-
+ 
   jumpTo = step => {
     const { handleClickJumpTo } = this.props;
     handleClickJumpTo(step);
   };
-
+ 
   renderStatus = () => {
     const { state } = this.props;
     const { isFinish, xIsNext } = state;
@@ -39,13 +38,13 @@ class Game extends Component {
     // Người chiến thắng là người vừa đi xong.
     return <p>Winner player: {xIsNext ? 'O' : 'X'}</p>;
   };
-
+ 
   renderHistory = isReverse => {
     const { state } = this.props;
     const { historys, stepNumber } = state.roomInfo;
     // const current = history[this.state.stepNumber];
     // const winner = calculateWinner(current.squares);
-
+ 
     const moves = historys.map((step, move) => {
       const desc = move
         ? `Go to move #${move}(${step.row},${step.col})`
@@ -80,20 +79,24 @@ class Game extends Component {
     }
     return moves;
   };
-
+ 
   handleClickReverse = () => {
     const { handleClickReverse } = this.props;
     handleClickReverse();
   };
-
+ 
   componentDidMount = () => {
     const io = socketIOClient('http://localhost:3001');
-    const {username} = this.props.userLogin.user;
-    io.on(SOCKET_EVENT.UPDATE_GAME +username, (data)=>{
-      const {roomInfo} = data;
-      const {updateGame} = this.props;
-      updateGame(roomInfo);
-    })
+    const {user} = this.props.userLogin;
+    if (user) {
+      const {username} = user;
+      io.on(SOCKET_EVENT.UPDATE_GAME + username, (data)=>{
+        const {roomInfo} = data;
+        const {updateGame} = this.props;
+        updateGame(roomInfo);
+      });
+    }
+ 
   }
   render() {
     const { gameInfo, handleClickSquare } = this.props;
@@ -141,16 +144,16 @@ class Game extends Component {
     );
   }
 }
-
+ 
 const mapStateToProps = state => ({
   gameInfo: state.gameInfo,
   userLogin: state.userLogin
 });
-
+ 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({handleClickSquare: fetchClickSquare, updateGame: updateGame}, dispatch);
 };
-
+ 
 export default connect(
   mapStateToProps,
   mapDispatchToProps

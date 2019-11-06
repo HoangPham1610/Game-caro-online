@@ -7,9 +7,9 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import {BrowserRouter as Router} from 'react-router-dom';
 import AppRoute from './router/route';
-import store from './store/appStore';
+import PersistedStore from './store/appStore';
 ReactDOM.render(
-<Provider store = {store}>
+<Provider store = {PersistedStore.getDefaultStore().store}>
     <Router>
         <App />
         <AppRoute/>

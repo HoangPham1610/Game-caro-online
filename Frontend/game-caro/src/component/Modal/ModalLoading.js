@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Modal, Button, Container, Row, Col } from 'react-bootstrap';
+import { Modal, Container, Row, Col } from 'react-bootstrap';
 import {connect} from 'react-redux';
 class ModalLoading extends Component {
-  
-    
+
     render() {
         const {isWaiting} = this.props.gameInfo;
         return (
@@ -40,8 +39,8 @@ const mapStateToProps = (state) => ({
   userLogin: state.userLogin
 })
 
-const mapDispatchToProps = {
+// const mapDispatchToProps = {
   
-}
+// }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ModalLoading);
+export default connect(mapStateToProps)(ModalLoading);

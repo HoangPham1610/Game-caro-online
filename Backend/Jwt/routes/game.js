@@ -288,6 +288,23 @@ const checkWinner = (historys, row, col) => {
 
 
 
+/**
+ * Kiểm tra bàn cờ đã được đánh hết chưa
+ * @param {squares} squares mảng bàn cờ
+ */
+const checkSquareFull = (squares) => {
+  // Kiểm tra xem bàn cờ còn chỗ trống không
+  for (let i = 0; i< squares.length; i++) {
+    for (let j = 0; j < squares.length; j++) {
+      if (squares[i][j] === null) { // Ô này chưa được đánh
+        return false;
+      }
+    }
+  }
+ 
+  return true;
+}
+ 
 /* GET home page. */
 router.post('/find-player', function(req, res, next) {
   const {user} = res.locals;
@@ -321,28 +338,32 @@ router.post('/find-player', function(req, res, next) {
           col: null
         }
       ], // Danh sách vị trí những quân cờ tạo chiến thắng
-      listMessage: [] // Lưu trữ tin nhắn
+      listMessage: [], // Lưu trữ tin nhắn
+      winPlayer: null // Lưu thông tin người chiến thắng
     }
     listRoom.set(roomId, roomInfo);
     io.sockets.emit('findPlayerSuccess' + playerX.username, {roomId: roomId, roomInfo: roomInfo});
     res.json({'message': 'Find Player Success', 'roomInfo' : roomInfo, 'roomId': roomId });
   } else  {
-    listPlayerWaiting.push(user);
-    res.json({'message': 'Please Waiting'});
+    // if (user.username !== listPlayerWaiting[0].username) {
+      listPlayerWaiting.push(user);
+      console.log('listWaiting:', listPlayerWaiting);
+      res.json({'message': 'Please Waiting'});
+    // }
   }
 });
-
+ 
 /**
  * Người chơi thực hiện đánh vào 1 ô chưa có nước đi
  */
 router.post('/click-square', (req, res) => {
-
+ 
   const {roomId, row, col} = req.body;
   const {user} = res.locals;
   const roomInfo = listRoom.get(roomId);
   console.log('test---------------------------------------------------------------------------------------');
   // console.log(roomInfo);
-  
+ 
   if (roomInfo === null || roomInfo === undefined) {
     res.json({'error': "Can't find room"})
   }
@@ -350,21 +371,23 @@ router.post('/click-square', (req, res) => {
   console.log('nextPlayer:', nextPlayer);
   console.log('user: ', user);
   if (user.username !== playerX.username && user.username !== playerO.username){
-   
+ 
     res.json({'error': 'User not exist'});
   }
-
+ 
   // Không phải lượt đi của user này
   if (user.username !== nextPlayer.username) {
     res.json({'error': 'Not your turn'});
   } else {
     const copyHistorys = historys.slice(0, historys.length);
-
+ 
     const currentHistory = copyHistorys[historys.length -1];
     const squares = [];
       for (let i = 0; i < currentHistory.squares.length; i += 1) {
         squares.push(currentHistory.squares[i].slice());
       }
+ 
+      // Nếu như ô cờ chưa ai đánh và chưa kết thúc game thì mới đánh
       if (squares[row][col] === null && isFinish === false) {
         squares[row][col] = nextPlayer.username === playerX.username ? 'X' : 'O';
         const next = nextPlayer.username === playerX.username ? playerO : playerX;
@@ -390,24 +413,106 @@ router.post('/click-square', (req, res) => {
         checkGameFinish = checkWinner(newRoomInfo.historys, row, col);
         newRoomInfo.isFinish = checkGameFinish.isFinish;
         newRoomInfo.listWin = checkGameFinish.listWin;
+        // Nếu có người chiến thắng 
+        if (newRoomInfo.isFinish) {
+          newRoomInfo.winPlayer = user;
+        } else {
+          // Kiểm tra squares full chưa
+          const isFull = checkSquareFull(squares);
+          if (isFull) {
+            // Kết thúc game. Kết quả là hòa
+            newRoomInfo.isFinish = true;
+          }
+        }
         listRoom.set(roomId, newRoomInfo);
         req.app.io.emit('updateGame' + next.username, {roomInfo: newRoomInfo});
         res.json({roomInfo: newRoomInfo});
       }
   }
-  
+ 
 });
-
+ 
+/**
+ * Thực hiện gửi tin nhắn trong bàn chơi
+ */
 router.post('/send-message', (req, res) => {
-
+ 
   const {roomId, message} = req.body;
   const {user} = res.locals;
   const roomInfo = listRoom.get(roomId);
-  
+ 
   const {listMessage, playerX, playerO} = roomInfo;
   const toUser = user.username === playerX.username ? playerO.username : playerX.username;
   listMessage.push({fromUser: user, message: message});
   req.app.io.emit('updateListMessage' + toUser, {listMessage: listMessage});
   res.json({listMessage: listMessage});
 });
+ 
+/** Người chơi xin hòa */
+router.post('/want-tie', (req, res) => {
+  const {roomId} = req.body;
+  const {user} = res.locals;
+  const roomInfo = listRoom.get(roomId);
+ 
+  const {playerX, playerO, isFinish} = roomInfo;
+  const toUser = user.username === playerX.username ? playerO.username : playerX.username;
+  // Nếu game chưa kết thúc thì mới xin hòa được
+  if (!isFinish) {
+    req.app.io.emit('playerWantTie' + toUser);
+  }
+ 
+  res.json({message: 'send success'});
+});
+ 
+/**
+ * Thực hiện trả lời có đồng ý hòa hay không
+ * isOk = true có nghĩa là đồng ý
+ */
+router.post('/result-tie', (req, res) => {
+  const {roomId, isOk} = req.body;
+  const {user} = res.locals;
+  const roomInfo = listRoom.get(roomId);
+ 
+  const {playerX, playerO, isFinish} = roomInfo;
+  const toUser = user.username === playerX.username ? playerO.username : playerX.username;
+  let newRoomInfo = Object.assign({}, roomInfo);
+  if (!isFinis && isOk) {
+    newRoomInfo.isFinish = true;
+  }
+  req.app.io.emit('playerConfirmTea' + toUser, {roomInfo: newRoomInfo});
+  res.json({message: 'send success'});
+});
+
+router.post('/new-game', (req, res) => {
+  const {roomId} = req.body;
+  const roomInfo = listRoom.get(roomId);
+  const {playerX} = roomInfo;
+  let newRoomInfo = Object.assign({}, roomInfo, {
+    historys: [
+      {
+        squares: Array(20)
+          .fill(null)
+          .map(() => {
+            return new Array(20).fill(null);
+          }),
+        row: null,
+        col: null
+      }
+    ], // Lịch sử chơi cờ
+    nextPlayer: playerX, // Kiểm tra ai là người chơi tiếp theo
+    isFinish: false, // Kiểm tra xem đã có người win chưa
+    stepNumber: 0, // Nước đi hiện tại
+    isReverse: false, // Biến kiểm tra đảo ngược danh sách nước đi
+    listWin: [
+      {
+        row: null,
+        col: null
+      }
+    ], // Danh sách vị trí những quân cờ tạo chiến thắng
+    listMessage: [], // Lưu trữ tin nhắn
+    winPlayer: null // Lưu thông tin người chiến thắng
+  })
+  listRoom.set(roomId, newRoomInfo);
+  res.json({roomInfo: newRoomInfo});
+})
 module.exports = router;
